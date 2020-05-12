@@ -1,0 +1,42 @@
+# Copyright 2018-present Lenovo
+# Confidential and Proprietary
+
+Bootstrap: docker
+From: ubuntu:16.04
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        wget \
+        libatlas-base-dev \
+        libboost-all-dev \
+        libgflags-dev \
+        libgoogle-glog-dev \
+        libhdf5-serial-dev \
+        libleveldb-dev \
+        liblmdb-dev \
+        libopencv-dev \
+        libprotobuf-dev \
+        libsnappy-dev \
+        protobuf-compiler \
+        python-dev \
+        python-numpy \
+        python-pip \
+        python-setuptools \
+        python-scipy && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2020-03-17 mark:
+# intel_tensorflow installation only work on pip versions 19 and before
+    pip --default-timeout=100 install -U 'pip~=19.0'
+    pip_path=`which pip`
+    sed -i 's/import main/import __main__/' $pip_path
+    sed -i 's/sys.exit(main())/sys.exit(__main__._main())/' $pip_path
+    pip --default-timeout=100 install -I intel_tensorflow==1.13.1
+
+    pip --default-timeout=100 install -U 'pip>=10.0'
+    pip --default-timeout=100 install -I setuptools>=36
+    pip --default-timeout=100 install -U scikit-learn
+
+%environment
+    export LC_ALL=C

@@ -1,0 +1,12 @@
+# Copyright 2019-present Lenovo
+# Confidential and Proprietary
+
+Bootstrap: docker
+From: tensorflow/tensorflow:2.1.0-gpu
+
+
+%post
+    pip_path=`which pip`
+    sed -i 's/import main/import __main__/' $pip_path
+    sed -i 's/sys.exit(main())/sys.exit(__main__._main())/' $pip_path
+    pip --default-timeout=100 install -U scikit-learn

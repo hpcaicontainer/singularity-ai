@@ -1,0 +1,56 @@
+# Copyright 2018-present Lenovo
+# Confidential and Proprietary
+
+Bootstrap: docker
+From: ubuntu:16.04
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        git \
+        wget \
+        libatlas-base-dev \
+        libboost-all-dev \
+        libgflags-dev \
+        libgoogle-glog-dev \
+        libhdf5-serial-dev \
+        libleveldb-dev \
+        liblmdb-dev \
+        libopencv-dev \
+        libprotobuf-dev \
+        libsnappy-dev \
+        protobuf-compiler \
+        python-dev \
+        python-numpy \
+        python-pip \
+        python-setuptools \
+        python-scipy && \
+    rm -rf /var/lib/apt/lists/*
+    cd /opt
+    git clone -b 1.0 --depth 1 https://github.com/BVLC/caffe.git
+    pip --default-timeout=100 install -U 'pip>=10.0'
+    pip_path=`which pip`
+    sed -i 's/import main/import __main__/' $pip_path
+    sed -i 's/sys.exit(main())/sys.exit(__main__._main())/' $pip_path
+
+    export LC_ALL=C
+    cd /opt/caffe/python
+    sed -i 's/^pandas.*/pandas==0.12.0/' requirements.txt
+    sed -i 's/^matplotlib.*/matplotlib==2.0.0/' requirements.txt
+    sed -i 's/^networkx.*/networkx==1.8.1/' requirements.txt
+    pip --default-timeout=100 install -r requirements.txt pydot
+    pip --default-timeout=100 install -U scikit-learn
+
+    cd ..
+    mkdir build && cd build
+    cmake -DCPU_ONLY=1 .. && \
+    make -j"$(nproc)"
+
+    echo "/opt/caffe/build/lib" >> /etc/ld.so.conf.d/caffe.conf && ldconfig
+
+%environment
+    LC_ALL=C
+    PYTHONPATH=/opt/caffe/python:$PYTHONPATH
+    PATH=/opt/caffe/build/tools:/opt/caffe/python:$PATH
+    export LC_ALL PYTHONPATH PATH

@@ -1,0 +1,10 @@
+# Copyright 2018-present Lenovo
+# Confidential and Proprietary
+
+Bootstrap: docker
+From: tensorflow/tensorflow:1.15.2
+
+
+%post
+
+    pip --default-timeout=100 install -U scikit-learn

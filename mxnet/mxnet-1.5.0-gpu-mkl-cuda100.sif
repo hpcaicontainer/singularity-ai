@@ -1,0 +1,8 @@
+# Copyright 2018-present Lenovo
+# Confidential and Proprietary
+
+Bootstrap: docker
+From: mxnet/python:1.5.0_gpu_cu100_mkl_py2
+
+%post
+    pip --default-timeout=100 install -U scikit-learn
