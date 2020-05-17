@@ -1,6 +1,3 @@
-# Copyright 2018-present Lenovo
-# Confidential and Proprietary
-
 Bootstrap: docker
 From: tensorflow/tensorflow:1.13.1-gpu
 

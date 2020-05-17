@@ -1,7 +1,3 @@
-# Copyright 2019-present Lenovo
-# Confidential and Proprietary
-
-
 Bootstrap: docker
 From: centos:centos7.6.1810
 

@@ -1,6 +1,3 @@
-# Copyright 2018-present Lenovo
-# Confidential and Proprietary
-
 Bootstrap: docker
 From: ubuntu:16.04
 
